@@ -1,0 +1,132 @@
+<div class="container">
+    <div class="page-header cf">
+        <h2 class="h1-style majortitle">{{ blog.title | escape | link_to: blog.url }}</h2>
+        
+        {% assign show_tags = false %}
+        {% for tag in blog.all_tags %}
+        {% unless tag contains 'meta-' %}{% assign show_tags = true %}{% endunless %}
+        {% endfor %}
+        
+        <div class="filters">
+            {% if show_tags %}
+            <a href="#" data-toggle-target=".tags.nav-row">{{ settings.text_filter_b }} <span class="state">+</span></a>
+            {% endif %}
+        </div><!-- /.filters -->
+        
+        <div class="social-area">
+            {% include 'social-sharing' %}
+            <a class="rsslink" href="{{ blog.url }}.atom" title="{{ blog.title | escape }} RSS"><img src="{{ settings.rss_col | asset_url }}" alt="{{ blog.title | escape }} RSS"/></a>
+        </div>
+    </div>
+</div><!-- /.pagetitle -->
+
+{% if show_tags %}
+<div class="tags nav-row spaced-row {% unless current_tags.size > 0 %}hidden{% endunless %}">
+    <ul>
+        {% for tag in blog.all_tags %}
+        {% unless tag contains 'meta-' %}
+            {% if current_tags contains tag %}
+                <li class="active">{{ tag | link_to_remove_tag: tag }}</li>
+            {% else %}
+                <li>{{ tag | link_to_tag: tag }}</li>
+            {% endif %}
+        {% endunless %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% include 'article' %}
+
+<div class="container pagination-row">
+    {% if blog.previous_article %}
+    {{ 'previous' | link_to: blog.previous_article }}
+    {% endif %}
+    {% if blog.previous_article and blog.next_article %} / {% endif %}
+    {% if blog.next_article %}
+    {{ 'next' | link_to: blog.next_article }}
+    {% endif %}
+</div>
+
+{% if blog.comments_enabled? %}
+    {% paginate article.comments by 50 %}
+        {% if article.comments != blank %}
+        <div id="comments" class="container cf padded-row">
+            <h4 class="align-centre">Comments</h4>
+            
+            {% comment %} Loop through approved comments: {% endcomment %}        
+            {% for comment in article.comments reversed %}
+                <div class="comment spaced-row {% if forloop.first %}first{% endif %}">
+                    {% if settings.show_gravatars %}
+                        <div class="gravatar">
+                            <img src="http://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" alt="{{ comment.author }}" />
+                        </div>
+                    {% endif %}
+                    <div class="detail">
+                        <p class="author">{{ comment.author }} said:</p>
+                        <div class="text">{{ comment.content }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+          
+            {% comment %} Show a comment that was *just* submitted {% endcomment %}
+            {% if comment and comment.created_at %}
+                <div class="comment spaced-row">
+                    {% if settings.show_gravatars %}
+                        <div class="gravatar">
+                            <img src="http://www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}" alt="{{ comment.author }}" />
+                        </div>
+                    {% endif %}
+                    <div class="detail">
+                        <p class="author">{{ comment.author }} said:</p>
+                        <div class="text">{{ comment.content }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div> <!-- /#comments -->
+        
+        <div class="container pagination-row">{% include 'pagination-control' %}</div>
+        {% endif %}
+    {% endpaginate %}
+    
+    <div id="template" class="container cf form">
+        {% form article %}
+        <h4>Leave a comment</h4>
+        
+        {% if form.posted_successfully? %}
+          <p>Your comment has been successfully submitted.</p>
+        {% endif %}
+        
+        {% if blog.moderated? %}
+        <p>Please note: comments must be approved before they are published.</p>
+        {% endif %}
+        
+        {% if form.errors %}
+            <p>Not all the fields have been filled out correctly!</p>
+            <ul class="error">
+            {% for field in form.errors %}
+                <li>{{ field | capitalize }} {{ form.errors.messages[field] }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    
+        <div class="large_form{% if form.errors contains 'author' %} has-error{% endif %}">
+            <label for="comment_author">Name</label>
+            <input type="text" id="comment_author" name="comment[author]" size="40" value="{{form.author}}" />
+        </div>
+        <div class="large_form{% if form.errors contains 'email' %} has-error{% endif %}">
+            <label for="comment_email">Email</label>
+            <input type="text" id="comment_email" name="comment[email]" size="40" value="{{form.email}}" />
+        </div>
+        <div class="large_form{% if form.errors contains 'body' %} has-error{% endif %}">
+            <label for="comment_body">Comment</label>
+            <textarea id="comment_body" name="comment[body]" cols="40" rows="5">{{form.body}}</textarea>
+        </div>
+        
+        <div class="action_bottom">
+            <input type="submit" value="Post comment" id="comment-submit" class="btn" />
+        </div>
+        {% endform %}
+    </div> <!-- /.form -->
+{% endif %}
+

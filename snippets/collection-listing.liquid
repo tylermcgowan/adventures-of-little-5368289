@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="page-header cf">
+        <h1 class="majortitle">Collections</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="collection-listing">
+      {% for collection in collections %}
+        {% unless collection.handle == 'all' or collection.handle contains 'frontpage' %}
+            {% include 'collection-block' %}
+        {% endunless %}
+      {% endfor %}
+      {% include 'product-list-placeholders' %}
+    </div><!-- /.collection-listing -->
+</div><!-- /.container -->

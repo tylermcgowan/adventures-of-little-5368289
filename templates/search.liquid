@@ -1,0 +1,67 @@
+{% paginate search.results by 10 %}
+
+{% if search.performed %}
+    <div class="padded-row cf">
+        <div class="layout-column-half-left">
+            {% if search.performed and search.results != empty %}
+                <h1 class="majortitle">You searched for: <strong>{{search.terms | escape}}</strong></h1>
+                <h5>We found {{ paginate.items }} {{ paginate.items | pluralize: 'result','results' }}</h5>
+            {% endif %}
+        </div>
+        
+        <div class="layout-column-half-right align-right">
+            <form id="search-form" name="search" action="/search">
+                <h1 class="majortitle">{{ settings.text_head_search_again }}</h1>
+                <input type="text" id="q" name="q" value="" /><input type="submit" class="compact" value="&rarr;" />
+            </form>
+        </div>
+    </div>
+{% else %}
+    <div class="page-header">
+        <h1 class="majortitle">{{ settings.text_head_search }}</h1>
+        <div class="align-center">
+            <form id="search-form" name="search" action="/search">
+                <input type="text" id="q" name="q" value="" /><input type="submit" class="compact" value="&rarr;" />
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+
+{% if search.performed %}
+<div class="row-spacing cf">
+    <!-- This section required for live-search -->
+    <div id="live-search-results" data-total="{{ paginate.items }}">
+        {% for item in search.results %}
+            <div class="result" data-url="{{ item.url }}" data-title="{{ item.title }}" {% if item.featured_image %}data-image-icon="{{ item.featured_image | product_img_url: 'icon' }}"{% endif %}></div>
+        {% endfor %}
+    </div>
+    
+    {% if search.results == empty %}
+        <p>No results found for your search.</p>
+    {% else %}
+        <div class="collection-listing cf">
+          {% for item in search.results %}
+            {% if item.featured_image %}
+                {% include 'product-block' with item %}
+            {% else %}
+                <div class="product-block page-block">
+                    <div class="block-inner">
+                        <div class="text-cont">
+                            <h4><a href="{{ item.url }}">{{ item.title }}</a></h4>
+                            <p><a href="{{ item.url }}">{{ item.content | strip_html | truncatewords: 20 | highlight: search.terms }}</a></p>
+                            <a href="{{ item.url }}">Continue reading &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+          {% endfor %}
+          {% include 'product-list-placeholders' %}
+        </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="pagination-row">{% include 'pagination-control' %}</div>
+
+{% endpaginate %}
