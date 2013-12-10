@@ -1,7 +1,7 @@
 {% if settings.social_show_tw or settings.social_show_go or settings.social_show_pi or settings.social_show_fa or settings.social_show_fb %}
 {% assign social_items_on_page = true%}
 <div class="social">
-    <span class="socitem label">{{ settings.text_share }}:</span>
+    {% comment %}<span class="socitem label">{{ settings.text_share }}:</span>{% endcomment %}
     {% if settings.social_show_tw %}
     <div class="socitem twittercont">
         <a href="https://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a>
