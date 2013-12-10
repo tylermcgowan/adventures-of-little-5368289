@@ -1,16 +1,36 @@
 {% if linklists[linklist].links.size > 0 %}
-<!-- BEGIN table.products -->
-<table class="products">
-{% tablerow link in linklists[linklist].links cols: 4 %}
-<div>
-  <a href="{{ link.url }}" title="Browse our {{ link.object.title | escape }} collection.">
-    <img src="{{ link.object.products.first.featured_image | product_img_url: 'medium' }}" width="175px" alt="{{ link.object.title | escape }}" />
-    <big>{{ link.title }}</big>
-  </a>
-</div>
-{% endtablerow %}
-</table>
-<!-- END table.products -->
-{% else %}
-<p>Please {{ 'create a link list' | link_to: '/admin/links' }} that contains links to the collections you wish to feature here. The title of that link list must be <strong>{{ linklist | replace: '-', ' ' | capitalize }}</strong>.</p>
+
+<div class="container">
+  <div class="collection-listing">
+  {% for link in linklists[linklist].links %}
+    <div class="product-block collection-block">
+      <div class="block-inner">
+        <div class="image-cont">
+          <a class="more-info" href="{{ link.url }}">
+            {% if link.object.image %}
+              {{ link.object.image.src | collection_img_url: 'large' | img_tag: link.object.image.alt | link_to: link.url, link.title }}
+            {% else %}
+              {% paginate link.object.all_products by 1 %}
+              {{ link.object.all_products.first.featured_image | product_img_url: 'large' | img_tag: link.object.all_products.first.featured_image.alt | link_to: link.url, link.title }}
+              {% endpaginate %}
+            {% endif %}
+          </a>
+          {% unless settings.home_coll_list_overmode == empty %}
+          <a class="more-info" href="{{ link.url }}">
+            <span class="productlabel general">
+              <span>
+                <span clas="title">{{ link.title }}</span>
+                <span class="count">{{ link.object.all_products_count }} products</span>
+              </span>
+            </span>
+          </a>
+          {% endunless %}
+        </div><!-- /.image-cont -->
+      </div><!-- /.block-inner -->
+    </div><!-- /.product-block -->
+
+  {% endfor %}
+  </div><!-- /.collection-listing -->
+</div><!-- /.container -->
+
 {% endif %}
