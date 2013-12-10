@@ -1,0 +1,52 @@
+/*
+        This font software is the property of Commercial Type.
+
+        You may not modify the font software, use it on another website, or install it on a computer.
+
+        License information is available at http://commercialtype.com/eula
+        For more information please visit Commercial Type at http://commercialtype.com or email us at info[at]commercialtype.com
+
+        Copyright (C) 2013 Schwartzco Inc.
+        License: 1312-HPZPDV     
+*/
+
+
+@font-face {
+  font-family: 'Platform Web';
+  src: url('Platform-Regular-Web.eot');
+  src: url('Platform-Regular-Web.eot?#iefix') format('embedded-opentype'),
+     url('Platform-Regular-Web.woff') format('woff'),
+     url('Platform-Regular-Web.ttf') format('truetype'),
+     url('Platform-Regular-Web.svg#Platform Web') format('svg');
+  font-weight:  400;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+.Platform-Regular-Web {
+  font-family: 'Platform Web';
+  font-weight:  400;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+
+@font-face {
+  font-family: 'Platform Web';
+  src: url('Platform-Medium-Web.eot');
+  src: url('Platform-Medium-Web.eot?#iefix') format('embedded-opentype'),
+     url('Platform-Medium-Web.woff') format('woff'),
+     url('Platform-Medium-Web.ttf') format('truetype'),
+     url('Platform-Medium-Web.svg#Platform Web') format('svg');
+  font-weight:  500;
+  font-style:   normal;
+  font-stretch: normal;
+}
+
+.Platform-Medium-Web {
+  font-family: 'Platform Web';
+  font-weight:  500;
+  font-style:   normal;
+  font-stretch: normal;
+}
+

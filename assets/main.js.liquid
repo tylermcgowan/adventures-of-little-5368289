@@ -577,6 +577,20 @@ $(function(){
                         Shopify.linkOptionSelectors(window.productJSON[i], $(this).closest('form'));
                     }
                     {% endif %}
+                    
+                    //Grey-out sold out products in variant dropdown
+                    if(window.productJSON[i].options.length == 1) {
+                      for(var j=0; j<window.productJSON[i].variants.length; j++) {
+                        var variant = window.productJSON[i].variants[j];
+                        if(variant.inventory_quantity == 0
+                            && (variant.inventory_management != null && variant.inventory_management == 'shopify')
+                            && variant.inventory_policy == 'deny') {
+                          $(this).closest('form').find('.single-option-selector option:eq('+j+')').attr('disabled', 'disabled').append(' (sold out)');
+                        }
+                      }
+                      $(this).closest('form').find('.single-option-selector').trigger('change');
+                    }
+
                     break;
                 }
             }
