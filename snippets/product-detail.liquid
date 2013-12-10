@@ -22,12 +22,17 @@
         {% if product_detail_in_block %}{{ settings.text_imgs }}{% endif %}
         
         {% for image in product-detail.images %}
-            {% if product_detail_in_block %} / {% endif %}
+            {% comment %}Below is part of original numbered image links in slidedown{% endcomment %}
+            {% comment %}{% if product_detail_in_block %} / {% endif %}{% endcomment %}
             <a {% if forloop.first %} class="active" {% endif %} title="{{ image.alt | escape }}" href="{{ image | product_img_url: gallery_main_image_size }}" data-full-size-url="{{ image | product_img_url: 'master' }}">
             {% unless product_detail_in_block %}
                 <img src="{{ image | product_img_url: 'thumb' }}" alt="{{ image.alt | escape }}"/></a>
             {% else %}
-                {{ forloop.index }}</a>
+                {% comment %}Original numbered image links in slidedown{% endcomment %}
+                {% comment %}{{ forloop.index }}</a>{% endcomment %}
+
+                {% comment %}Show thumbnails under image in product slidedown{% endcomment %}
+                <img src="{{ 'blank.gif' | asset_url }}" data-src="{{ image | product_img_url: 'thumb' }}" alt="{{ image.alt | escape }}"/></a>
             {% endunless %}
         {% endfor %}
     </div>
@@ -35,7 +40,10 @@
 </div>
 <div class="detail layout-column-half-right">
     {% include 'product-label' with product-detail %}
-    
+
+    <!-- Move Vendor/Brand up above Product Title -->
+   {% if settings.prod_show_vendor %}<p>{{ product-detail.vendor | link_to_vendor }}</p>{% endif %} 
+   <!-- End move vendor/brand -->
   <h1 class="title">
     {% if product_detail_in_block %}
     	<a href="{{ product_url }}">{{ product-detail.title }}</a>
@@ -49,7 +57,8 @@
       {% endif %}
       {{ product-detail.price | money }}
   	</h2>
-    {% if settings.prod_show_vendor %}<p>{{ settings.text_vendor }} {{ product-detail.vendor | link_to_vendor }}</p>{% endif %}
+    {% comment %}Original location for Vendor/Brand{% endcomment %}
+    {% comment %}{% if settings.prod_show_vendor %}<p>{{ settings.text_vendor }} {{ product-detail.vendor | link_to_vendor }}</p>{% endif %}{% endcomment %}
     
     <div class="product-form section">
         {% if product-detail.available %}
@@ -96,7 +105,9 @@
         {% endif %}
         {% include 'social-sharing' %}
     {% else %}
-  	<a class="more" href="{{ product_url }}">More Details &rarr;</a>
+  	{% comment %} Add short description to product slide down {% endcomment %}
+            <div class="description user-content">{{ product-detail.description | strip_html | truncate: 100 }}</div>
+            <a class="more" href="{{ product_url }}">More Details &rarr;</a>
     {% endif %}
 </div>
 
@@ -109,3 +120,26 @@
   addProductJSON({{ product-detail | json }});
 </script>
 {% endunless %}
+
+{% comment %}Tabbed Description jQuery{% endcomment %}
+<script>
+  $(document).ready(function() {
+    $('ul.tabs').each(function(){
+      var active, content, links = $(this).find('a');
+      active = links.first().addClass('active');
+      content = $(active.attr('href'));
+      links.not(':first').each(function () {
+        $($(this).attr('href')).hide();
+      });
+      $(this).find('a').click(function(e){
+        active.removeClass('active');
+        content.hide();
+        active = $(this);
+        content = $($(this).attr('href'));
+        active.addClass('active');
+        content.show();
+        return false;
+      });
+    });
+  });
+</script>
